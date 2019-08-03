@@ -13,7 +13,7 @@
 
 ```cd /srv```
 
-```git clone git@github.com:AlekseyArh/python-facedars.git```
+```git clone git@github.com:izvestia/python-facedars.git```
 
 ```cd /srv/python-facedars```
 
