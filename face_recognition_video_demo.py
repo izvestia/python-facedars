@@ -22,7 +22,6 @@ def get_distance(model, face):
     face = (face - face.mean()) / face.std()
     face = numpy.expand_dims(face, axis=0)
     return embedder.predict_on_batch(face)
-    return numpy.linalg.norm(embedder.predict_on_batch(face))
 
 
 # Созданием базы с размечеными лицами
