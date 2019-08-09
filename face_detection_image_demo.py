@@ -9,11 +9,11 @@ detector = MTCNN()
 # Загрузка изображения с лицами
 image = cv2.imread('demo/detection_image/input/people.jpg')
 
-# Увеличение/уменьшение наименьшей стороны изображения до 500 пикселей
+# Увеличение/уменьшение наименьшей стороны изображения до 1000 пикселей
 if image.shape[0] < image.shape[1]:
-    image = imutils.resize(image, height=500)
+    image = imutils.resize(image, height=1000)
 else:
-    image = imutils.resize(image, width=500)
+    image = imutils.resize(image, width=1000)
 
 # Получить размеры изображения
 image_size = numpy.asarray(image.shape)[0:2]
