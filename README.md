@@ -1,4 +1,4 @@
-# Face D.A.R.S.
+# Face D.A.R.S. test
 Система обнаружения и распознавания лиц на python с использованием tensorflow
 
 ![alt text](demo/detection_image/demo.gif)
