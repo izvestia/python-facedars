@@ -1,4 +1,6 @@
-tensorflow==1.14.0
+tensorflow==1.10.1
+keras==2.2.4
+mtcnn
 opencv-python
 numpy
 scipy

@@ -1,16 +1,16 @@
-from dars.mtcnn import MTCNN
+from mtcnn.mtcnn import MTCNN
 import statistics
 import os
 import cv2
 import numpy
-import dars.keras
+import keras
 import imutils
 
 # Создание сети нахождения лиц
 detector = MTCNN()
 
 # Загрузка модели сети определения лиц
-embedder = dars.keras.models.load_model('model/keras/facenet_keras.h5', compile=False)
+embedder = keras.models.load_model('model/keras/facenet_keras.h5', compile=False)
 
 # Загрузка видео
 capture = cv2.VideoCapture('demo/detection_video/input/miss-russia.mp4')
@@ -36,6 +36,9 @@ for dirname in ['julia', 'natalia']:
 
             # Загрузка изображения с лицом
             image = cv2.imread('demo/people/' + dirname + '/' + file)
+
+            # Замена BGR на RGB
+            frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
             # Получить размеры изображения
             image_size = numpy.asarray(image.shape)[0:2]
@@ -77,7 +80,7 @@ while True:
     # Если есть кадр
     if success:
 
-        # Увеличение наименьшей стороны изображения до 1000 пикселей
+        # Увеличение/уменьшение наименьшей стороны изображения до 1000 пикселей
         if frame.shape[0] < frame.shape[1]:
             frame = imutils.resize(frame, height=1000)
         else:
@@ -91,6 +94,9 @@ while True:
 
         # Копия изображения для рисования рамок на нём
         image_detected = frame.copy()
+
+        # Замена BGR на RGB (так находит в два раза больше лиц)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Цвет меток BGR
         marked_color = (0, 255, 0, 1)
@@ -135,12 +141,13 @@ while True:
                 y2 = numpy.minimum(y + h + round(h / 4), image_size[0])
 
                 # Отборка лиц {selected|rejected}
-                if face_box['confidence'] > 0.98:  # 0.96 - уверенность сети в процентах что это лицо
+                if face_box['confidence'] > 0.99:  # 0.99 - уверенность сети в процентах что это лицо
 
                     identity = None
                     difference = None
                     min_difference = 8
-                    min_median = 10
+                    median = None
+                    min_median = 8
                     faces = {}
 
                     # Сверка расстояний с известными лицами
@@ -187,6 +194,10 @@ while True:
                             (0, 255, 0, 1),
                             1
                         )
+
+                        # Сохранение изображения лица на диск в директорию recognized
+                        cv2.imwrite('demo/recognition_video/output/faces/recognized/' + str(median) + '.' + str(face_n)
+                                    + '.jpg', face_image)
 
                         # Информируем консоль
                         print('\033[92m' + str(identity) + ' - ' + str(min_median) + '\033[0m')

@@ -1,4 +1,4 @@
-from dars.mtcnn import MTCNN
+from mtcnn.mtcnn import MTCNN
 import cv2
 import numpy
 import imutils
@@ -21,7 +21,7 @@ while True:
     # Если есть кадр
     if success:
 
-        # Увеличение наименьшей стороны изображения до 1000 пикселей
+        # Увеличение/уменьшение наименьшей стороны изображения до 1000 пикселей
         if frame.shape[0] < frame.shape[1]:
             frame = imutils.resize(frame, height=1000)
         else:
@@ -35,6 +35,9 @@ while True:
 
         # Копия изображения для рисования рамок на нём
         image_detected = frame.copy()
+
+        # Замена BGR на RGB (так находит в два раза больше лиц)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Цвет меток BGR
         marked_color = (0, 255, 0, 1)
@@ -60,14 +63,14 @@ while True:
                 y2 = numpy.minimum(y + h + round(h / 4), image_size[0])
 
                 # Получение картинки с лицом
-                cropped = frame[y1:y2, x1:x2, :]
+                cropped = image_detected[y1:y2, x1:x2, :]
                 face_image = cv2.resize(cropped, (160, 160), interpolation=cv2.INTER_AREA)
 
                 # Имя файла (уверенность + номер)
                 face_file_name = str(face_box['confidence']) + '.' + str(face_n) + '.jpg'
 
                 # Отборка лиц {selected|rejected}
-                if face_box['confidence'] > 0.95:  # 0.95 - уверенность сети в процентах что это лицо
+                if face_box['confidence'] > 0.99:  # 0.99 - уверенность сети в процентах что это лицо
 
                     # Рисует белый квадрат на картинке по координатам
                     cv2.rectangle(
@@ -104,8 +107,8 @@ while True:
                 # Сохранение изображения лица на диск в директории {selected|rejected}
                 cv2.imwrite(face_path, face_image)
 
-            # Сохраняем кадр с видео
-            cv2.imwrite('demo/detection_video/output/frames/' + str(frame_id) + '.jpg', image_detected)
+        # Сохраняем кадр с видео
+        cv2.imwrite('demo/detection_video/output/frames/' + str(frame_id) + '.jpg', image_detected)
 
     else:
         break

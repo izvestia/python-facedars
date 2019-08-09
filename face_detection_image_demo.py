@@ -1,4 +1,4 @@
-from dars.mtcnn import MTCNN
+from mtcnn.mtcnn import MTCNN
 import cv2
 import numpy
 import imutils
@@ -9,7 +9,7 @@ detector = MTCNN()
 # Загрузка изображения с лицами
 image = cv2.imread('demo/detection_image/input/people.jpg')
 
-# Увеличение наименьшей стороны изображения до 1000 пикселей
+# Увеличение/уменьшение наименьшей стороны изображения до 1000 пикселей
 if image.shape[0] < image.shape[1]:
     image = imutils.resize(image, height=1000)
 else:
@@ -26,6 +26,9 @@ image_detected = image.copy()
 
 # Копия изображения для рисования меток на нём
 image_marked = image.copy()
+
+# Замена BGR на RGB (так находит в два раза больше лиц)
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 # Цвет меток BGR
 marked_color = (0, 255, 0, 1)
@@ -54,14 +57,14 @@ if faces_boxes:
         print(x1, y1, x2, y2, image_size[0], image_size[1])
 
         # Получение картинки с лицом
-        cropped = image[y1:y2, x1:x2, :]
+        cropped = image_detected[y1:y2, x1:x2, :]
         face_image = cv2.resize(cropped, (160, 160), interpolation=cv2.INTER_AREA)
 
         # Имя файла (уверенность + номер)
         face_file_name = str(face_box['confidence']) + '.' + str(face_n) + '.jpg'
 
         # Отборка лиц {selected|rejected}
-        if face_box['confidence'] > 0.95:  # 0.95 - уверенность сети в процентах что это лицо
+        if face_box['confidence'] > 0.99:  # 0.99 - уверенность сети в процентах что это лицо
 
             # Рисует белый квадрат на картинке по координатам
             cv2.rectangle(

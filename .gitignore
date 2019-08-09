@@ -4,3 +4,4 @@ demo/detection_video/output/faces/*/*.jpg
 demo/detection_video/output/frames/*.jpg
 demo/recognition_video/output/frames/*.jpg
 demo/recognition_video/output/frames/*.mp4
+demo/recognition_video/output/faces/*/*.jpg

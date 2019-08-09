@@ -1,11 +1,11 @@
-# Face D.A.R.S. test
+# Face D.A.R.S.
 Система обнаружения и распознавания лиц на python с использованием tensorflow
 
 ![alt text](demo/detection_image/demo.gif)
 
 # Технологии
-* MTCNN - Нахождение лиц
-* FaceNet - Распознавание лиц
+* [MTCNN](https://github.com/ipazc/mtcnn) - Нахождение лиц
+* [FaceNet](https://github.com/davidsandberg/facenet) - Распознавание лиц
 * Tensorflow - Математика нейросетей
 * OpenCV - Работа с изображениями
 
@@ -55,6 +55,7 @@
 Только теперь лица будут сверяться с лицами из дерикторий ```demo/people```
 
 * В директорию ```demo/recognition_video/output/frames/``` попадут кадры видео с разметкой найденных и распознанных лиц
+* В директорию ```demo/recognition_video/output/faces/recognized/``` попадут распознанные лица
 
 # Устранение ошибок
 ValueError: Object arrays cannot be loaded when allow_pickle=False
