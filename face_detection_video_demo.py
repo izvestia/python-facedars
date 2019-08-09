@@ -21,11 +21,11 @@ while True:
     # Если есть кадр
     if success:
 
-        # Увеличение/уменьшение наименьшей стороны изображения до 1000 пикселей
+        # Увеличение/уменьшение наименьшей стороны изображения до 500 пикселей
         if frame.shape[0] < frame.shape[1]:
-            frame = imutils.resize(frame, height=1000)
+            frame = imutils.resize(frame, height=500)
         else:
-            frame = imutils.resize(frame, width=1000)
+            frame = imutils.resize(frame, width=500)
 
         # Получить размеры изображения
         image_size = numpy.asarray(frame.shape)[0:2]

@@ -70,4 +70,4 @@ ImportError: cannot import name 'abs'
 
 ```find ~/.local/ -name "tensorflow" | xargs -Ipkg rm -rfv pkg```
 
-```python3 -m pip install tensorflow==1.10.1```
+```python3 -m pip install tensorflow==1.12.3```
