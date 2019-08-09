@@ -1,4 +1,5 @@
 from dars.mtcnn import MTCNN
+import statistics
 import os
 import cv2
 import numpy
@@ -21,7 +22,7 @@ def get_distance(model, face):
     face = face.astype('float32')
     face = (face - face.mean()) / face.std()
     face = numpy.expand_dims(face, axis=0)
-    return embedder.predict_on_batch(face)
+    return embedder.predict(face)[0]
 
 
 # Созданием базы с размечеными лицами
@@ -63,7 +64,6 @@ for dirname in ['julia', 'natalia']:
 
                 # Сохранение суммы евклидова пространства
                 base[dirname].append(get_distance(embedder, image))
-
 
 frame_id = 0  # Инициализация счётчика кадров
 face_n = 0  # Инициализация счётчика лиц
@@ -135,20 +135,35 @@ while True:
                 y2 = numpy.minimum(y + h + round(h / 4), image_size[0])
 
                 # Отборка лиц {selected|rejected}
-                if face_box['confidence'] > 0.95:  # 0.95 - уверенность сети в процентах что это лицо
+                if face_box['confidence'] > 0.98:  # 0.96 - уверенность сети в процентах что это лицо
 
                     identity = None
                     difference = None
                     min_difference = 8
+                    min_median = 10
+                    faces = {}
 
                     # Сверка расстояний с известными лицами
                     for name, base_distances in base.items():
+                        faces[name] = []
                         for base_distance in base_distances:
-                            #difference = abs(db_distance - distance)
                             difference = numpy.linalg.norm(base_distance - distance)
                             if difference < min_difference:
-                                min_difference = difference
-                                identity = name
+                                print('difference - ' + str(difference))
+                                faces[name].append(difference)
+
+                    # Нахождение минимальной мидианы среди проголосовавших лиц
+                    if faces:
+                        for name, items in faces.items():
+                            # Идентификация только участвуют два и больше лиц
+                            if items and len(items) >= 2:
+                                print(name)
+                                print(items)
+                                median = statistics.median(items)
+                                if median < min_median:
+                                    print('median - ' + str(median))
+                                    min_median = median
+                                    identity = name
 
                     # Если лицо опознано
                     if identity:
@@ -174,7 +189,7 @@ while True:
                         )
 
                         # Информируем консоль
-                        print('\033[92m' + str(identity) + ' - ' + str(min_difference) + '\033[0m')
+                        print('\033[92m' + str(identity) + ' - ' + str(min_median) + '\033[0m')
 
                     else:
 
@@ -193,20 +208,20 @@ while True:
                 else:
 
                     # Рисует красный квадрат на картинке по координатам
-                    cv2.rectangle(
-                        image_detected,
-                        (x1, y1),
-                        (x2, y2),
-                        (0, 0, 255, 1),
-                        1
-                    )
+                    # cv2.rectangle(
+                    #     image_detected,
+                    #     (x1, y1),
+                    #     (x2, y2),
+                    #     (0, 0, 255, 1),
+                    #     1
+                    # )
 
                     # Информируем консоль
                     print('\033[91mFalse\033[0m')
 
         # Сохраняем кадр с видео
         cv2.imwrite('demo/recognition_video/output/frames/' + str(frame_id) + '.jpg', image_detected)
-        print('frame ' + frame_id)
+        print('frame ' + str(frame_id))
 
     else:
         break
