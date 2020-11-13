@@ -1,4 +1,4 @@
-tensorflow==1.12.3
+tensorflow==2.3.1
 keras==2.2.4
 mtcnn
 opencv-python
